@@ -4,6 +4,7 @@ class BlogsController < ApplicationController
   skip_before_action :authenticate_user!, only: %i[index show]
 
   before_action :set_blog, only: %i[show edit update destroy]
+  before_action :correct_user,   only: %i[edit update]
 
   def index
     @blogs = Blog.search(params[:term]).published.default_order
@@ -52,5 +53,9 @@ class BlogsController < ApplicationController
     permit_params << :random_eyecatch if current_user.premium
 
     params.require(:blog).permit(*permit_params)
+  end
+
+  def correct_user
+    raise ActiveRecord::RecordNotFound, "The operation is incorrect." unless @blog.owned_by?(current_user)
   end
 end
