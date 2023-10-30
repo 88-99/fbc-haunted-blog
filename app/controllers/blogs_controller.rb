@@ -49,13 +49,13 @@ class BlogsController < ApplicationController
   end
 
   def blog_params
-    permit_params = [:title, :content, :secret]
+    permit_params = %i[title content secret]
     permit_params << :random_eyecatch if current_user.premium
 
     params.require(:blog).permit(*permit_params)
   end
 
   def correct_user
-    raise ActiveRecord::RecordNotFound, "The operation is incorrect." unless @blog.owned_by?(current_user)
+    raise ActiveRecord::RecordNotFound, 'The operation is incorrect.' unless @blog.owned_by?(current_user)
   end
 end
