@@ -4,14 +4,14 @@ class BlogsController < ApplicationController
   skip_before_action :authenticate_user!, only: %i[index show]
 
   before_action :set_blog, only: %i[show edit update destroy]
-  before_action :correct_user,   only: %i[edit update destroy]
+  before_action :ensure_user_correctness, only: %i[edit update destroy]
 
   def index
     @blogs = Blog.search(params[:term]).published.default_order
   end
 
   def show
-    correct_user if @blog.secret?
+    ensure_user_correctness if @blog.secret?
   end
 
   def new
@@ -57,7 +57,7 @@ class BlogsController < ApplicationController
     params.require(:blog).permit(*permit_params)
   end
 
-  def correct_user
+  def ensure_user_correctness
     raise ActiveRecord::RecordNotFound, 'The operation is incorrect.' unless @blog.owned_by?(current_user)
   end
 end
