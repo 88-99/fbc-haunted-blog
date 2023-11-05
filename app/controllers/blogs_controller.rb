@@ -58,6 +58,6 @@ class BlogsController < ApplicationController
   end
 
   def ensure_user_correctness
-    raise ActiveRecord::RecordNotFound, 'The operation is incorrect.' unless @blog.owned_by?(current_user)
+    raise ActiveRecord::RecordNotFound, t('activerecord.errors.messages.incorrect_operation') unless @blog.owned_by?(current_user)
   end
 end
